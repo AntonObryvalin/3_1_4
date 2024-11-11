@@ -15,12 +15,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Контроллер AdminController отвечает за управление пользователями.
- * <p>
- * Доступен только пользователям с ролью ADMIN. Предоставляет CRUD операции для пользователей.
- * </p>
- */
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -29,11 +23,6 @@ public class AdminController {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
-    /**
-     * Конструктор для {@code AdminController}.
-     *
-     * @param userService сервис для управления пользователями
-     */
     @Autowired
     public AdminController(UserService userService, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
         this.userService = userService;
@@ -41,12 +30,6 @@ public class AdminController {
         this.roleRepository = roleRepository;
     }
 
-    /**
-     * Отображает страницу с перечнем всех пользователей.
-     *
-     * @param model объект {@link Model} для передачи данных в представление
-     * @return имя представления "admin.html"
-     */
     @GetMapping
     public String allUsers(Model model) {
         List<User> users = userService.findAll(); // Получение списка всех пользователей
@@ -54,12 +37,6 @@ public class AdminController {
         return "admin/admin";
     }
 
-    /**
-     * Отображает форму для добавления нового пользователя.
-     *
-     * @param model объект {@link Model} для передачи данных в представление
-     * @return имя представления "edit_user.html" для добавления
-     */
     @GetMapping("/new")
     public String newUser(Model model) {
         User user = new User();
@@ -69,12 +46,6 @@ public class AdminController {
         return "admin/edit_user";
     }
 
-    /**
-     * Обрабатывает POST-запрос для добавления нового пользователя.
-     *
-     * @param user объект {@link User}, полученный из формы
-     * @return перенаправление на страницу списка пользователей
-     */
     @PostMapping
     public String addUser(@ModelAttribute("user") User user,
                           @RequestParam("roles") List<Long> roles) {
@@ -85,13 +56,6 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    /**
-     * Отображает форму для редактирования существующего пользователя.
-     *
-     * @param id    идентификатор пользователя
-     * @param model объект {@link Model} для передачи данных в представление
-     * @return имя представления "edit_user.html" для редактирования
-     */
     @GetMapping("/{id}/edit")
     public String editUser(@PathVariable("id") Long id, Model model) {
         User user = userService.findById(id);
@@ -104,12 +68,6 @@ public class AdminController {
         return "admin/edit_user";
     }
 
-    /**
-     * Обрабатывает POST-запрос для обновления существующего пользователя.
-     *
-     * @param user объект {@link User}, полученный из формы
-     * @return перенаправление на страницу списка пользователей
-     */
     @PostMapping("/{id}/update")
     public String updateUser(@PathVariable("id") Long id,
                              @ModelAttribute("user") User user,
@@ -133,13 +91,6 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-
-    /**
-     * Обрабатывает запрос на удаление пользователя.
-     *
-     * @param id идентификатор пользователя
-     * @return перенаправление на страницу списка пользователей
-     */
     @PostMapping("/{id}/delete")
     public String deleteUser(@PathVariable("id") Long id) {
         userService.delete(id); // Удаление пользователя

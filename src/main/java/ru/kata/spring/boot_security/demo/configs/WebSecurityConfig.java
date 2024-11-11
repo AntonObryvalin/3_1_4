@@ -13,12 +13,6 @@ import ru.kata.spring.boot_security.demo.services.UserServiceImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-/**
- * Класс WebSecurityConfig настраивает безопасность приложения.
- * <p>
- * Определяет доступ к URL, настройки формы логина и интеграцию с {@link UserServiceImpl}.
- * </p>
- */
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -26,24 +20,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final SuccessUserHandler successUserHandler;
     private final UserServiceImpl userService;
 
-    /**
-     * Конструктор для {@code WebSecurityConfig}.
-     *
-     * @param successUserHandler хэндлер для обработки успешной аутентификации
-     * @param userService        сервис для управления пользователями
-     */
     @Autowired
     public WebSecurityConfig(SuccessUserHandler successUserHandler, UserServiceImpl userService) {
         this.successUserHandler = successUserHandler;
         this.userService = userService;
     }
 
-    /**
-     * Настраивает HTTP безопасность, определяя доступ к URL и настройки формы логина.
-     *
-     * @param http объект {@link HttpSecurity} для настройки безопасности
-     * @throws Exception если происходит ошибка конфигурации
-     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -65,15 +47,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
 
-
-
-
                 // Настройка формы логина
                 .formLogin()
                 .loginPage("/auth/login") // Путь к странице логина
                 .loginProcessingUrl("/process_login") // Путь для обработки логина
                 .successHandler(successUserHandler) // Хэндлер для успешного логина
-//                .defaultSuccessUrl("/user", true)
+
                 .permitAll()
                 .and()
 
@@ -84,12 +63,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll();
     }
 
-    /**
-     * Настраивает менеджер аутентификации, используя {@link UserServiceImpl}.
-     *
-     * @param auth объект {@link AuthenticationManagerBuilder} для настройки аутентификации
-     * @throws Exception если происходит ошибка конфигурации
-     */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService)// Настройка userDetailsService для аутентификации

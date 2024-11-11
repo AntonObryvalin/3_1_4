@@ -5,13 +5,6 @@ import org.springframework.security.core.GrantedAuthority;
 import javax.persistence.*;
 import java.util.Set;
 
-/**
- * Класс Role представляет роль пользователя в системе.
- * <p>
- * Связан с классом {@link User} через отношение многие-ко-многим.
- * Каждая роль может быть назначена нескольким пользователям, и каждый пользователь может иметь несколько ролей.
- * </p>
- */
 @Entity
 @Table(name = "roles")
 public class Role implements GrantedAuthority {
@@ -20,19 +13,11 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * Название роли, например, ROLE_USER или ROLE_ADMIN.
-     */
     @Column(unique = true, nullable = false)
     private String name;
 
-    /**
-     * Пользователи, связанные с данной ролью.
-     */
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
-
-    // Конструкторы
 
     public Role() {
     }
@@ -40,8 +25,6 @@ public class Role implements GrantedAuthority {
     public Role(String name) {
         this.name = name;
     }
-
-    // Геттеры и сеттеры
 
     public Long getId() {
         return id;
@@ -63,17 +46,11 @@ public class Role implements GrantedAuthority {
         this.users = users;
     }
 
-    /**
-     * Возвращает название роли как авторитет.
-     *
-     * @return название роли
-     */
     @Override
     public String getAuthority() {
         return name;
     }
 
-    // Переопределение equals и hashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
