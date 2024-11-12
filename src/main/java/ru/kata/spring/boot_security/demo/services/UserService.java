@@ -14,7 +14,11 @@ public interface UserService {
 
     void save(User user);
 
-    void update(User user);
+    void update(User user, String newPassword);
 
     void delete(Long id);
+
+    User findByEmail(String email);
+
+
 }

@@ -14,7 +14,14 @@
 </head>
 <body>
 <h2 th:text="${user.id != null} ? 'Редактировать пользователя' : 'Добавить пользователя'">User Form</h2>
+
+<!-- Блок для отображения сообщения об ошибке -->
+<div th:if="${error}" class="error">
+  <p th:text="${error}">Пользователь с таким email уже существует</p>
+</div>
+
 <form th:action="${user.id != null} ? @{/admin/{id}/update(id=${user.id})} : @{/admin}" th:object="${user}" method="post">
+
   <!-- CSRF-токен удалён, так как CSRF-защита отключена -->
   <input type="hidden" th:field="*{id}" />
 
@@ -25,6 +32,7 @@
       <p th:errors="*{username}">Ошибка</p>
     </div>
   </div>
+
   <div class="form-group">
     <label for="email">Электронная почта:</label>
     <input type="email" id="email" th:field="*{email}" required/>
@@ -32,28 +40,34 @@
       <p th:errors="*{email}">Ошибка</p>
     </div>
   </div>
+
   <div class="form-group">
-    <label for="password">Пароль:</label>
-    <input type="password" id="password" th:field="*{password}" required/>
+    <!-- Условие для отображения текста в зависимости от создания или редактирования -->
+    <label for="password" th:text="${user.id != null ? 'Пароль (оставьте пустым, если не хотите менять):' : 'Пароль:'}">Пароль:</label>
+    <input type="password" id="password" th:field="*{password}" placeholder="Введите пароль"/>
     <div th:if="${#fields.hasErrors('password')}" class="error">
       <p th:errors="*{password}">Ошибка</p>
     </div>
   </div>
+
   <div class="form-group">
     <label>Роли:</label>
     <div th:each="role : ${allRoles}">
       <input type="checkbox" th:value="${role.id}" th:name="roles" th:id="'role_' + ${role.id}"
-             th:checked="${user.roles.contains(role)}"/>
+             th:checked="${user.roles != null and user.roles.contains(role)}"/>
       <label th:for="'role_' + ${role.id}" th:text="${role.name}">ROLE_USER</label>
     </div>
     <div th:if="${#fields.hasErrors('roles')}" class="error">
       <p th:errors="*{roles}">Ошибка</p>
     </div>
   </div>
+
   <div class="form-group">
     <button type="submit" th:text="${user.id != null} ? 'Обновить' : 'Создать'">Submit</button>
   </div>
+
 </form>
+
 <a th:href="@{/admin}">Назад к списку пользователей</a>
 </body>
 </html>
