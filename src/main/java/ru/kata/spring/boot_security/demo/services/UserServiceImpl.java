@@ -1,17 +1,12 @@
 package ru.kata.spring.boot_security.demo.services;
 
 import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
-
-
 import java.util.List;
 
 @Service
@@ -27,7 +22,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User findById(Long id) {
-        return userRepository.findById(id).orElse(null);
+        return userRepository.findById(id);
     }
 
     @Override
@@ -37,12 +32,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("Пользователь не найден");
         }
-        Hibernate.initialize(user.getRoles()); // Принудительная инициализация ролей
+        Hibernate.initialize(user.getRoles());
         return user;
     }
 
     @Override
-    @Transactional(readOnly = true) // Транзакция для ленивой загрузки ролей
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
@@ -52,17 +46,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository.findAll();
     }
 
-
     @Override
+    @Transactional
     public void save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     @Override
+    @Transactional
     public void update(User user, String newPassword) {
         // Получаем существующего пользователя из базы данных
-        User existingUser = findById(user.getId());
+        User existingUser = userRepository.findById(user.getId());
+        if (existingUser == null) {
+            throw new UsernameNotFoundException("Пользователь не найден");
+        }
 
         // Проверка: если новый пароль пустой, сохраняем старый пароль
         if (newPassword == null || newPassword.isEmpty()) {
@@ -72,24 +70,27 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             user.setPassword(passwordEncoder.encode(newPassword));
         }
 
-        // Копируем другие данные пользователя
-        user.setRoles(existingUser.getRoles());
-        user.setEmail(existingUser.getEmail());
+        // Устанавливаем неизменные поля из существующего пользователя
         user.setUsername(existingUser.getUsername());
+        user.setEmail(existingUser.getEmail());
 
-        // Сохраняем обновлённого пользователя
-        userRepository.save(user);
+        // Если роли не были изменены, сохраняем существующие
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            user.setRoles(existingUser.getRoles());
+        }
+
+        // Обновляем пользователя через репозиторий
+        userRepository.update(user);
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
-        userRepository.deleteById(id);
+        userRepository.delete(id);
     }
 
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-
-
 }
