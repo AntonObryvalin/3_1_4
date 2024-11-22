@@ -62,7 +62,6 @@ public class UserRepositoryImpl implements UserRepository {
         managedUser.setRoles(user.getRoles());
     }
 
-
     @Override
     @Transactional
     public void delete(Long id) {

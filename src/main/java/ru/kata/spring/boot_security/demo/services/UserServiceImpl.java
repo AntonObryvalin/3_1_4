@@ -56,30 +56,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public void update(User user, String newPassword) {
-        // Получаем существующего пользователя из базы данных
         User existingUser = userRepository.findById(user.getId());
         if (existingUser == null) {
             throw new UsernameNotFoundException("Пользователь не найден");
         }
 
-        // Проверка: если новый пароль пустой, сохраняем старый пароль
         if (newPassword == null || newPassword.isEmpty()) {
             user.setPassword(existingUser.getPassword());
         } else {
-            // Шифруем новый пароль
             user.setPassword(passwordEncoder.encode(newPassword));
         }
 
-        // Устанавливаем неизменные поля из существующего пользователя
         user.setUsername(existingUser.getUsername());
         user.setEmail(existingUser.getEmail());
 
-        // Если роли не были изменены, сохраняем существующие
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
             user.setRoles(existingUser.getRoles());
         }
 
-        // Обновляем пользователя через репозиторий
         userRepository.update(user);
     }
 
