@@ -50,6 +50,18 @@ public class UserRepositoryImpl implements UserRepository {
         entityManager.persist(user);
     }
 
+//    @Override
+//    @Transactional
+//    public void update(User user) {
+//        User managedUser = entityManager.find(User.class, user.getId());
+//        if (managedUser == null) {
+//            throw new IllegalArgumentException("Пользователь не найден");
+//        }
+//
+//        managedUser.setPassword(user.getPassword());
+//        managedUser.setRoles(user.getRoles());
+//    }
+
     @Override
     @Transactional
     public void update(User user) {
@@ -58,8 +70,13 @@ public class UserRepositoryImpl implements UserRepository {
             throw new IllegalArgumentException("Пользователь не найден");
         }
 
+        // Обновляем поля
+        managedUser.setUsername(user.getUsername());
+        managedUser.setEmail(user.getEmail());
         managedUser.setPassword(user.getPassword());
         managedUser.setRoles(user.getRoles());
+
+        // После установки новых значений, изменения будут автоматически сохранены благодаря @Transactional
     }
 
     @Override

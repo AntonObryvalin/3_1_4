@@ -53,6 +53,30 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepository.save(user);
     }
 
+//    @Override
+//    @Transactional
+//    public void update(User user, String newPassword) {
+//        User existingUser = userRepository.findById(user.getId());
+//        if (existingUser == null) {
+//            throw new UsernameNotFoundException("Пользователь не найден");
+//        }
+//
+//        if (newPassword == null || newPassword.isEmpty()) {
+//            user.setPassword(existingUser.getPassword());
+//        } else {
+//            user.setPassword(passwordEncoder.encode(newPassword));
+//        }
+//
+//        user.setUsername(existingUser.getUsername());
+//        user.setEmail(existingUser.getEmail());
+//
+//        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+//            user.setRoles(existingUser.getRoles());
+//        }
+//
+//        userRepository.update(user);
+//    }
+
     @Override
     @Transactional
     public void update(User user, String newPassword) {
@@ -61,20 +85,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new UsernameNotFoundException("Пользователь не найден");
         }
 
-        if (newPassword == null || newPassword.isEmpty()) {
-            user.setPassword(existingUser.getPassword());
+        // Обновляем поля пользователя
+        existingUser.setUsername(user.getUsername());
+        existingUser.setEmail(user.getEmail());
+
+        if (newPassword != null && !newPassword.isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(newPassword));
         } else {
-            user.setPassword(passwordEncoder.encode(newPassword));
+            // Если пароль не меняется, оставляем существующий
+            existingUser.setPassword(existingUser.getPassword());
         }
 
-        user.setUsername(existingUser.getUsername());
-        user.setEmail(existingUser.getEmail());
-
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            user.setRoles(existingUser.getRoles());
+        if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+            existingUser.setRoles(user.getRoles());
         }
 
-        userRepository.update(user);
+        // Сохраняем обновленного пользователя
+        userRepository.update(existingUser);
     }
 
     @Override
@@ -87,4 +114,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
+
 }

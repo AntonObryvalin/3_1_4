@@ -4,11 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Админ Панель</title>
-    <!-- Подключение стилей Bootstrap для улучшенного оформления -->
+    <!-- Подключение стилей Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
+    <!-- ===================================== -->
+    <!--             Custom Styles            -->
+    <!-- ===================================== -->
     <!-- ===================================== -->
     <!--             Custom Styles            -->
     <!-- ===================================== -->
@@ -165,10 +168,14 @@
 
     <ul class="nav nav-tabs" id="adminTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab" aria-controls="users" aria-selected="true">Users Table</button>
+            <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button"
+                    role="tab" aria-controls="users" aria-selected="true">Users Table
+            </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="new-user-tab" data-bs-toggle="tab" data-bs-target="#new-user" type="button" role="tab" aria-controls="new-user" aria-selected="false">New User</button>
+            <button class="nav-link" id="new-user-tab" data-bs-toggle="tab" data-bs-target="#new-user" type="button"
+                    role="tab" aria-controls="new-user" aria-selected="false">New User
+            </button>
         </li>
     </ul>
 
@@ -179,37 +186,8 @@
         <!-- ===================================== -->
 
         <div class="tab-pane fade show active" id="users" role="tabpanel" aria-labelledby="users-tab">
-            <table class="table table-bordered mt-3">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Имя пользователя</th>
-                    <th>Email</th>
-                    <th>Роли</th>
-                    <th>Действия</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="user : ${users}">
-                    <td th:text="${user.id}">1</td>
-                    <td th:text="${user.username}">username</td>
-                    <td th:text="${user.email}">email@example.com</td>
-                    <td>
-                        <span th:each="role : ${user.roles}" th:text="${role.name} + ' '"></span>
-                    </td>
-                    <td>
-                        <!-- Кнопка "Редактировать" с привязкой к модальному окну -->
-                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" th:data-bs-target="'#editUserModal' + ${user.id}">
-                            Редактировать
-                        </button>
-                        <!-- Кнопка "Удалить" с привязкой к модальному окну -->
-                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" th:data-bs-target="'#deleteUserModal' + ${user.id}">
-                            Удалить
-                        </button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            <!-- Контейнер для таблицы пользователей -->
+            <div id="usersTableContainer"></div>
         </div>
 
         <!-- ===================================== -->
@@ -222,43 +200,27 @@
                 <div class="row justify-content-center">
                     <div class="col-md-6">
                         <!-- Форма добавления нового пользователя -->
-                        <form th:action="@{/admin}" th:object="${newUser}" method="post">
+                        <form id="addUserForm">
                             <div class="mb-3">
                                 <label for="username" class="form-label">Имя пользователя</label>
-                                <input type="text" class="form-control" id="username" th:field="*{username}" placeholder="Введите имя пользователя" required>
-                                <div th:if="${#fields.hasErrors('username')}" class="text-danger">
-                                    <p th:errors="*{username}">Ошибка</p>
-                                </div>
+                                <input type="text" class="form-control" id="username" name="username"
+                                       placeholder="Введите имя пользователя" required>
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="Введите email" required>
-                                <div th:if="${#fields.hasErrors('email')}" class="text-danger">
-                                    <p th:errors="*{email}">Ошибка</p>
-                                </div>
+                                <input type="email" class="form-control" id="email" name="email"
+                                       placeholder="Введите email" required>
                             </div>
                             <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Введите пароль" required>
-                                <div th:if="${#fields.hasErrors('password')}" class="text-danger">
-                                    <p th:errors="*{password}">Ошибка</p>
-                                </div>
+                                <label for="password" class="form-label">Пароль</label>
+                                <input type="password" class="form-control" id="password" name="password"
+                                       placeholder="Введите пароль" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Role</label>
-                                <ul class="role-list">
-                                    <li>
-                                        <input type="radio" class="form-check-input" th:field="*{roles}" value="2" th:id="'roleAdminNew'">
-                                        <label class="form-check-label" th:for="'roleAdminNew'">Admin</label>
-                                    </li>
-                                    <li>
-                                        <input type="radio" class="form-check-input" th:field="*{roles}" value="1" th:id="'roleUserNew'">
-                                        <label class="form-check-label" th:for="'roleUserNew'">User</label>
-                                    </li>
-                                </ul>
-                                <div th:if="${#fields.hasErrors('roles')}" class="text-danger">
-                                    <p th:errors="*{roles}">Ошибка</p>
-                                </div>
+                                <select class="form-select" id="rolesSelect" name="roles" multiple required>
+                                    <!-- Опции будут загружены через JavaScript -->
+                                </select>
                             </div>
                             <button type="submit" class="btn btn-success">Add new user</button>
                         </form>
@@ -270,106 +232,10 @@
 </div>
 
 <!-- ===================================== -->
-<!--      Модальные окна для каждого пользователя -->
+<!--      Контейнер для модальных окон     -->
 <!-- ===================================== -->
 
-<div th:each="user : ${users}">
-
-    <!-- ===================================== -->
-    <!--     Модальное окно редактирования     -->
-    <!-- ===================================== -->
-
-    <div class="modal fade" th:id="'editUserModal' + ${user.id}" tabindex="-1" aria-labelledby="editUserModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" th:text="'Редактировать пользователя: ' + ${user.username}"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                </div>
-
-                <div class="modal-body">
-                    <!-- Форма редактирования -->
-                    <form th:action="@{/admin/{id}/update(id=${user.id})}" method="post">
-                        <!-- Поле "ID" (скрытое поле) -->
-                        <input type="hidden" name="id" th:value="${user.id}"/>
-
-                        <!-- Поле "Имя пользователя" -->
-                        <div class="mb-3">
-                            <label for="usernameEdit" class="form-label">Имя пользователя:</label>
-                            <input type="text" class="form-control" th:id="'usernameEdit_' + ${user.id}"
-                                   name="username" th:value="${user.username}" required/>
-                        </div>
-
-                        <!-- Поле "Электронная почта" -->
-                        <div class="mb-3">
-                            <label for="emailEdit" class="form-label">Электронная почта:</label>
-                            <input type="email" class="form-control" th:id="'emailEdit_' + ${user.id}"
-                                   name="email" th:value="${user.email}" required/>
-                        </div>
-
-                        <!-- Поле "Пароль" -->
-                        <div class="mb-3">
-                            <label for="passwordEdit" class="form-label">Пароль (оставьте пустым, если не хотите менять):</label>
-                            <input type="password" class="form-control" th:id="'passwordEdit_' + ${user.id}"
-                                   name="password"/>
-                        </div>
-
-                        <!-- Список ролей -->
-                        <div class="mb-3">
-                            <label class="form-label">Роли:</label>
-                            <select class="form-select" name="roles" multiple>
-                                <option th:each="role : ${allRoles}" th:value="${role.id}"
-                                        th:selected="${user.roles.contains(role)}" th:text="${role.name}">
-                                </option>
-                            </select>
-                        </div>
-
-                        <!-- Кнопка сохранения -->
-                        <button type="submit" class="btn btn-primary">Обновить</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===================================== -->
-    <!--    Модальное окно подтверждения удаления -->
-    <!-- ===================================== -->
-
-    <div class="modal fade" th:id="'deleteUserModal' + ${user.id}" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Удаление пользователя</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Вы действительно хотите удалить пользователя со следующими данными?</p>
-                    <ul>
-                        <li><strong>ID:</strong> <span th:text="${user.id}"></span></li>
-                        <li><strong>Имя пользователя:</strong> <span th:text="${user.username}"></span></li>
-                        <li><strong>Email:</strong> <span th:text="${user.email}"></span></li>
-                        <li><strong>Роли:</strong>
-                            <span th:each="role : ${user.roles}" th:text="${role.name} + ' '"></span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="modal-footer">
-                    <!-- Кнопка "Закрыть" -->
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                    <!-- Форма удаления пользователя -->
-                    <form th:action="@{'/admin/' + ${user.id} + '/delete'}" method="post" style="display:inline;">
-                        <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
-                        <input type="hidden" name="_method" value="delete"/>
-                        <button type="submit" class="btn btn-danger">Удалить</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
+<div id="modalsContainer"></div>
 
 <!-- ===================================== -->
 <!--         Подключение скриптов Bootstrap -->
@@ -378,5 +244,286 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+
+<!-- ===================================== -->
+<!--      Ваш JavaScript код для Fetch API  -->
+<!-- ===================================== -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const usersTableContainer = document.getElementById('usersTableContainer');
+        const modalsContainer = document.getElementById('modalsContainer');
+        const addUserForm = document.getElementById('addUserForm');
+        const rolesSelect = document.getElementById('rolesSelect');
+
+        // Функция для загрузки ролей и заполнения select
+        const loadRoles = () => {
+            fetch('/api/roles')
+                .then(response => response.json())
+                .then(roles => {
+                    roles.forEach(role => {
+                        const option = document.createElement('option');
+                        option.value = role.id;
+                        option.text = role.name.replace('ROLE_', '');
+                        rolesSelect.appendChild(option);
+                    });
+                });
+        };
+
+        // Функция для загрузки пользователей
+        const loadUsers = () => {
+            fetch('/api/users')
+                .then(response => response.json())
+                .then(users => {
+                    let tableHTML = `
+                        <table class="table table-bordered mt-3">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Имя пользователя</th>
+                                    <th>Email</th>
+                                    <th>Роли</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+
+                    users.forEach(user => {
+                        let roles = user.roles.map(role => role.name.replace('ROLE_', '')).join(' ');
+                        tableHTML += `
+                            <tr>
+                                <td>${user.id}</td>
+                                <td>${user.username}</td>
+                                <td>${user.email}</td>
+                                <td>${roles}</td>
+                                <td>
+                                    <button class="btn btn-info btn-sm" data-user-id="${user.id}" data-action="edit">Редактировать</button>
+                                    <button class="btn btn-danger btn-sm" data-user-id="${user.id}" data-action="delete">Удалить</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    tableHTML += `
+                            </tbody>
+                        </table>
+                    `;
+
+                    usersTableContainer.innerHTML = tableHTML;
+                });
+        };
+
+        // Загрузка ролей и пользователей при загрузке страницы
+        loadRoles();
+        loadUsers();
+
+        // Обработчики событий для кнопок "Редактировать" и "Удалить"
+        usersTableContainer.addEventListener('click', event => {
+            if (event.target.dataset.action === 'edit') {
+                const userId = event.target.dataset.userId;
+                // Открыть модальное окно редактирования
+                openEditModal(userId);
+            } else if (event.target.dataset.action === 'delete') {
+                const userId = event.target.dataset.userId;
+                // Открыть модальное окно удаления
+                openDeleteModal(userId);
+            }
+        });
+
+        // Обработка формы добавления пользователя
+        addUserForm.addEventListener('submit', event => {
+            event.preventDefault();
+
+            const formData = new FormData(addUserForm);
+            const user = {
+                username: formData.get('username'),
+                email: formData.get('email'),
+                password: formData.get('password'),
+                roles: Array.from(rolesSelect.selectedOptions).map(option => ({ id: option.value }))
+            };
+
+            fetch('/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Обновить таблицу пользователей
+                        loadUsers();
+                        // Очистить форму
+                        addUserForm.reset();
+                        // Переключиться на вкладку "Users Table"
+                        const usersTab = new bootstrap.Tab(document.querySelector('#users-tab'));
+                        usersTab.show();
+                    } else {
+                        // Обработка ошибок
+                        alert('Ошибка при добавлении пользователя');
+                    }
+                });
+        });
+
+        // Функция для открытия модального окна редактирования
+        const openEditModal = (userId) => {
+            // Получить данные пользователя и открыть модальное окно
+            fetch(`/api/users/${userId}`)
+                .then(response => response.json())
+                .then(user => {
+                    // Создать модальное окно
+                    const modalHTML = `
+                        <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Редактировать пользователя: ${user.username}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="editUserForm">
+                                            <input type="hidden" name="id" value="${user.id}">
+                                            <div class="mb-3">
+                                                <label for="usernameEdit" class="form-label">Имя пользователя:</label>
+                                                <input type="text" class="form-control" id="usernameEdit" name="username" value="${user.username}" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="emailEdit" class="form-label">Электронная почта:</label>
+                                                <input type="email" class="form-control" id="emailEdit" name="email" value="${user.email}" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="passwordEdit" class="form-label">Пароль (оставьте пустым, если не хотите менять):</label>
+                                                <input type="password" class="form-control" id="passwordEdit" name="password">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Роли:</label>
+                                                <select class="form-select" id="rolesEditSelect" name="roles" multiple required>
+                                                    <!-- Опции будут загружены через JavaScript -->
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Обновить</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    modalsContainer.innerHTML = modalHTML;
+
+                    // Заполнить список ролей
+                    const rolesEditSelect = document.getElementById('rolesEditSelect');
+                    fetch('/api/roles')
+                        .then(response => response.json())
+                        .then(roles => {
+                            roles.forEach(role => {
+                                const option = document.createElement('option');
+                                option.value = role.id;
+                                option.text = role.name.replace('ROLE_', '');
+                                if (user.roles.some(userRole => userRole.id === role.id)) {
+                                    option.selected = true;
+                                }
+                                rolesEditSelect.appendChild(option);
+                            });
+                        });
+
+                    // Обработка формы редактирования
+                    const editUserForm = document.getElementById('editUserForm');
+                    editUserForm.addEventListener('submit', event => {
+                        event.preventDefault();
+
+                        const formData = new FormData(editUserForm);
+                        const updatedUser = {
+                            id: user.id,
+                            username: formData.get('username'),
+                            email: formData.get('email'),
+                            password: formData.get('password'),
+                            roles: Array.from(rolesEditSelect.selectedOptions).map(option => ({ id: option.value }))
+                        };
+
+                        fetch(`/api/users/${user.id}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(updatedUser)
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    // Обновить таблицу пользователей
+                                    loadUsers();
+                                    // Закрыть модальное окно
+                                    const editUserModalEl = document.getElementById('editUserModal');
+                                    const editUserModal = bootstrap.Modal.getInstance(editUserModalEl);
+                                    editUserModal.hide();
+                                } else {
+                                    // Обработка ошибок
+                                    alert('Ошибка при обновлении пользователя');
+                                }
+                            });
+                    });
+
+                    // Показать модальное окно
+                    const editUserModalEl = document.getElementById('editUserModal');
+                    const editUserModal = new bootstrap.Modal(editUserModalEl);
+                    editUserModal.show();
+                });
+        };
+
+        // Функция для открытия модального окна удаления
+        const openDeleteModal = (userId) => {
+            // Создать модальное окно
+            const modalHTML = `
+                <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Удаление пользователя</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Вы действительно хотите удалить этого пользователя?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Удалить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modalsContainer.innerHTML = modalHTML;
+
+            // Обработка удаления
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            confirmDeleteBtn.addEventListener('click', () => {
+                fetch(`/api/users/${userId}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            // Обновить таблицу пользователей
+                            loadUsers();
+                            // Закрыть модальное окно
+                            const deleteUserModalEl = document.getElementById('deleteUserModal');
+                            const deleteUserModal = bootstrap.Modal.getInstance(deleteUserModalEl);
+                            deleteUserModal.hide();
+                        } else {
+                            // Обработка ошибок
+                            alert('Ошибка при удалении пользователя');
+                        }
+                    });
+            });
+
+            // Показать модальное окно
+            const deleteUserModalEl = document.getElementById('deleteUserModal');
+            const deleteUserModal = new bootstrap.Modal(deleteUserModalEl);
+            deleteUserModal.show();
+        };
+    });
+</script>
+
 </body>
 </html>
