@@ -20,7 +20,7 @@ public class AdminPageController {
 
     @GetMapping("/admin")
     public String getAdminPage() {
-        return "admin/admin"; // Возвращаем шаблон admin.html
+        return "admin/admin";
     }
 
     @ModelAttribute

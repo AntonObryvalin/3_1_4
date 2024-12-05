@@ -76,7 +76,6 @@ public class UserRepositoryImpl implements UserRepository {
         managedUser.setPassword(user.getPassword());
         managedUser.setRoles(user.getRoles());
 
-        // После установки новых значений, изменения будут автоматически сохранены благодаря @Transactional
     }
 
     @Override
