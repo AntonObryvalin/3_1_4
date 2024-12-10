@@ -1,10 +1,10 @@
-package ru.kata.spring.boot_security.demo.repositories;
+package ru.kata.spring.boot_security.demo.dao;
 
 import ru.kata.spring.boot_security.demo.models.Role;
 import java.util.List;
 import java.util.Set;
 
-public interface RoleRepository {
+public interface RoleDao {
     Role findById(Long id);
     Role findByName(String name);
     List<Role> findAll();

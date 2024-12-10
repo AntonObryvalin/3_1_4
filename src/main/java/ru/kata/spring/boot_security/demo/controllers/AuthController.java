@@ -27,12 +27,14 @@ public class AuthController {
 
     @GetMapping("/login")
     public String loginPage() {
+        // login.html будет без th:, просто форма
         return "auth/login";
     }
 
     @GetMapping("/registration")
     public String registrationPage(Model model) {
         model.addAttribute("user", new User());
+        // registration.html без th:, просто форма
         return "auth/registration";
     }
 

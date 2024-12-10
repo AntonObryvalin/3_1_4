@@ -1,4 +1,4 @@
-package ru.kata.spring.boot_security.demo.repositories;
+package ru.kata.spring.boot_security.demo.dao;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,7 +8,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
-public class UserRepositoryImpl implements UserRepository {
+public class UserDaoImpl implements UserDao {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -45,25 +45,12 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    @Transactional
     public void save(User user) {
         entityManager.persist(user);
     }
 
-//    @Override
-//    @Transactional
-//    public void update(User user) {
-//        User managedUser = entityManager.find(User.class, user.getId());
-//        if (managedUser == null) {
-//            throw new IllegalArgumentException("Пользователь не найден");
-//        }
-//
-//        managedUser.setPassword(user.getPassword());
-//        managedUser.setRoles(user.getRoles());
-//    }
 
     @Override
-    @Transactional
     public void update(User user) {
         User managedUser = entityManager.find(User.class, user.getId());
         if (managedUser == null) {
@@ -79,7 +66,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    @Transactional
     public void delete(Long id) {
         User user = findById(id);
         if (user != null) {

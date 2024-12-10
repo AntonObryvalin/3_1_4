@@ -1,4 +1,4 @@
-package ru.kata.spring.boot_security.demo.repositories;
+package ru.kata.spring.boot_security.demo.dao;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.HashSet;
 
 @Repository
-public class RoleRepositoryImpl implements RoleRepository {
+public class RoleDaoImpl implements RoleDao {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -45,7 +45,6 @@ public class RoleRepositoryImpl implements RoleRepository {
     }
 
     @Override
-    @Transactional
     public void save(Role role) {
         entityManager.persist(role);
     }

@@ -4,31 +4,31 @@ import org.hibernate.Hibernate;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.kata.spring.boot_security.demo.dao.UserDao;
 import ru.kata.spring.boot_security.demo.models.User;
-import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
+    public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder) {
+        this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public User findById(Long id) {
-        return userRepository.findById(id);
+        return userDao.findById(id);
     }
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+        User user = userDao.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("Пользователь не найден");
         }
@@ -38,49 +38,25 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userDao.findByUsername(username);
     }
 
     @Override
     public List<User> findAll() {
-        return userRepository.findAll();
+        return userDao.findAll();
     }
 
     @Override
     @Transactional
     public void save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        userDao.save(user);
     }
-
-//    @Override
-//    @Transactional
-//    public void update(User user, String newPassword) {
-//        User existingUser = userRepository.findById(user.getId());
-//        if (existingUser == null) {
-//            throw new UsernameNotFoundException("Пользователь не найден");
-//        }
-//
-//        if (newPassword == null || newPassword.isEmpty()) {
-//            user.setPassword(existingUser.getPassword());
-//        } else {
-//            user.setPassword(passwordEncoder.encode(newPassword));
-//        }
-//
-//        user.setUsername(existingUser.getUsername());
-//        user.setEmail(existingUser.getEmail());
-//
-//        if (user.getRoles() == null || user.getRoles().isEmpty()) {
-//            user.setRoles(existingUser.getRoles());
-//        }
-//
-//        userRepository.update(user);
-//    }
 
     @Override
     @Transactional
     public void update(User user, String newPassword) {
-        User existingUser = userRepository.findById(user.getId());
+        User existingUser = userDao.findById(user.getId());
         if (existingUser == null) {
             throw new UsernameNotFoundException("Пользователь не найден");
         }
@@ -101,18 +77,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
 
         // Сохраняем обновленного пользователя
-        userRepository.update(existingUser);
+        userDao.update(existingUser);
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
-        userRepository.delete(id);
+        userDao.delete(id);
     }
 
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return userDao.findByEmail(email);
     }
 
 

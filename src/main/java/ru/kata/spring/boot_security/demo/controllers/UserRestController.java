@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.services.UserService;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -16,26 +17,35 @@ public class UserRestController {
         this.userService = userService;
     }
 
-    // Получить список всех пользователей
+    // получить список всех пользователей
     @GetMapping
     public List<User> getAllUsers() {
         return userService.findAll();
     }
 
-    // Получить пользователя по ID
+    // получить пользователя по ID
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
         return userService.findById(id);
     }
 
-    // Создать нового пользователя
+    // эндпоинт для получения текущего пользователя
+    @GetMapping("/current")
+    public User getCurrentUser(Principal principal) {
+        if (principal == null) {
+            return null; // или обработать неавторизованный доступ
+        }
+        return userService.findByUsername(principal.getName());
+    }
+
+    // создать новово пользователя
     @PostMapping
     public User createUser(@RequestBody User user) {
         userService.save(user);
         return user;
     }
 
-    // Обновить существующего пользователя
+    // абновить существующего пользователя
     @PutMapping("/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User user) {
         user.setId(id);
@@ -43,7 +53,7 @@ public class UserRestController {
         return user;
     }
 
-    // Удалить пользователя
+    // удалить пользователя
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         userService.delete(id);
